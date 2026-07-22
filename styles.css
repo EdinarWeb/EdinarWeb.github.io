@@ -1,0 +1,401 @@
+:root {
+  /* --- PALETA DE COLORES PREMIUM (Basado en Logo 'Dia & Nit') --- */
+  
+  /* Fondos - Violeta de marca refinado */
+  --bg-app: #5c38d6;           /* Violeta vibrante principal */
+  --bg-panel: #4e2eb9;         /* Violeta ligeramente más oscuro para paneles */
+  --bg-panel-dark: #3f2596;    /* Violeta profundo para header */
+  
+  /* Acento - Amarillo Oro de marca */
+  --accent-gold: #fedd3b;
+  --accent-gold-hover: #f1cf1d;
+  
+  /* Tarjetas de Tarea (UI Refinada) */
+  --card-bg: #ffffff;          /* Fondo blanco puro para contraste */
+  --card-text-main: #1e293b;  /* Gris muy oscuro para legibilidad */
+  --card-text-muted: #64748b; /* Gris medio para descripciones */
+  --card-border: #e2e8f0;     /* Borde gris muy sutil */
+  
+  /* Texto sobre fondos violetas */
+  --text-on-violet: #ffffff;
+  --text-on-violet-muted: #c7b8ea;
+  
+  /* Colores de Turno Mejorados (Más vibrantes) */
+  --turno-manana: #f97316;    /* Naranja vibrante */
+  --turno-tarde: #2563eb;     /* Azul real */
+  --turno-noche: #7e22ce;     /* Púrpura intenso */
+  
+  /* Semánticos */
+  --danger: #ef4444;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.2), 0 4px 6px -2px rgba(0,0,0,0.1);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- ESTILOS BASE --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--text-on-violet);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- HEADER PRINCIPAL (Diseño Elevado) --- */
+header {
+  background-color: var(--bg-panel-dark);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--accent-gold);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.badge-24h {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 99px; /* Forma de píldora */
+  text-transform: uppercase;
+  font-weight: 800;
+  box-shadow: var(--shadow-sm);
+}
+
+/* --- BOTONES PRINCIPALES --- */
+.btn {
+  background: linear-gradient(135deg, var(--accent-gold), #f9cf15);
+  color: #1e293b;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, var(--accent-gold-hover), #e6c212);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* --- CONTENIDO PRINCIPAL --- */
+main {
+  padding: 2.5rem 2rem;
+  flex: 1;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.controls {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid rgba(255,255,255,0.05);
+  padding-bottom: 1rem;
+}
+
+.controls h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: var(--accent-gold);
+}
+
+/* --- CALENDARIO GRID (Diseño Neumórfico Suave) --- */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1.25rem;
+  overflow-x: auto;
+  padding-bottom: 1rem; /* Espacio para el scrollbar móvil */
+}
+
+.day-column {
+  background-color: var(--bg-panel);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.03);
+  display: flex;
+  flex-direction: column;
+  min-height: 650px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.day-column:hover {
+  border-color: rgba(255,255,255,0.1);
+  background-color: #5332c9; /* Ligeramente más claro en hover */
+}
+
+.day-header {
+  padding: 1.25rem 1rem;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  text-align: center;
+  border-radius: 16px 16px 0 0;
+}
+
+.day-name {
+  font-size: 0.95rem;
+  color: var(--text-on-violet);
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.day-tasks {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* --- TARJETAS DE TAREA REFINADAS (Estilo Premium Blanca) --- */
+.task-card {
+  background-color: var(--card-bg);
+  color: var(--card-text-main);
+  border-radius: 12px;
+  padding: 1.25rem;
+  /* El borde de turno ahora es más sutil y en la parte superior */
+  border-top: 4px solid var(--accent-gold); 
+  box-shadow: var(--shadow-md);
+  position: relative;
+  transition: var(--transition);
+  border-left: 1px solid var(--card-border);
+  border-right: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.task-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+}
+
+/* Colores identificativos por turno en el borde superior */
+.task-card.manana { border-top-color: var(--turno-manana); }
+.task-card.tarde { border-top-color: var(--turno-tarde); }
+.task-card.noche { border-top-color: var(--turno-noche); }
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.employee-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+/* Burbuja de Turno Elegante */
+.shift-tag {
+  font-size: 0.65rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 99px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: white; /* Texto blanco siempre */
+}
+
+/* Colores de fondo para las burbujas de turno */
+.task-card.manana .shift-tag { background-color: var(--turno-manana); }
+.task-card.tarde .shift-tag { background-color: var(--turno-tarde); }
+.task-card.noche .shift-tag { background-color: var(--turno-noche); }
+
+.task-desc {
+  font-size: 0.9rem;
+  color: var(--card-text-muted);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.task-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  border-top: 1px solid var(--card-border);
+  padding-top: 0.75rem;
+  font-size: 0.75rem;
+}
+
+.btn-delete {
+  background: none;
+  border: none;
+  color: #94a3b8; /* Gris suave por defecto */
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.btn-delete:hover { 
+  color: var(--danger);
+  background-color: rgba(239, 68, 68, 0.1); /* Fondo rojo suave on hover */
+}
+
+/* --- MODAL (Diseño Dramático y Enfocado) --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.9); /* Fondo oscuro profundo */
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background-color: var(--bg-panel-dark);
+  border: 2px solid var(--accent-gold); /* Borde dorado destacado */
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  padding: 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  color: var(--text-on-violet);
+  transform: scale(0.9) translateY(20px);
+  transition: var(--transition);
+}
+
+.modal-overlay.active .modal {
+  transform: scale(1) translateY(0);
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: var(--accent-gold);
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-on-violet-muted);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: rgba(0,0,0,0.2); /* Fondo input oscuro */
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  color: white;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+  background: rgba(0,0,0,0.3);
+  box-shadow: 0 0 0 3px rgba(254, 221, 59, 0.2);
+}
+
+select.form-control {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3Sample%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.2rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.modal-actions .btn {
+  flex: 1; /* Botones del mismo ancho */
+  justify-content: center;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-on-violet-muted);
+  border: 2px solid rgba(255,255,255,0.15);
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  border-color: rgba(255,255,255,0.3);
+  box-shadow: none;
+}
+
+/* --- RESPONSIVE (ADAPTABILIDAD MÓVIL) --- */
+@media (max-width: 1200px) {
+  .calendar-grid {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .calendar-grid {
+    grid-template-columns: repeat(1, 1fr); /* Una columna en móvil/tablet */
+  }
+  .day-column {
+    min-height: auto;
+    margin-bottom: 1.5rem;
+  }
+}
