@@ -1,19 +1,19 @@
 const CACHE_NAME = "dianit-v3";
 const ASSETS = [
-  "./",
-  "./https://dia-i-nit-organizador-de-tareas.netlify.app/",
-  "./styles.css",
-  "./app.js",
-  "./manifest.json",
-  "./sw.js",
-  "./images/icon.png",
-  "./images/512x512.png",
-  "./images/384x384.png",
-  "./images/192x192.png",
-  "./images/96x96.png",
-  "./images/72x72.png",
-  "./images/48x48.png",
-  "./images/apple-touch-icon.png",
+  "/",
+  "/https://dia-i-nit-organizador-de-tareas.netlify.app/",
+  "/styles.css",
+  "/app.js",
+  "/manifest.json",
+  "/sw.js",
+  "/images/icon.png",
+  "/images/512x512.png",
+  "/images/384x384.png",
+  "/images/192x192.png",
+  "/images/96x96.png",
+  "/images/72x72.png",
+  "/images/48x48.png",
+  "/images/apple-touch-icon.png",
 ];
 
 // Instalación y almacenamiento tolerante a fallos
