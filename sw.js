@@ -1,7 +1,7 @@
 const CACHE_NAME = 'dianit-v1.0.0';
 const ASSETS = [
   "./",
-  "./index.html",
+  "./https://dia-i-nit-organizador-de-tareas.netlify.app/",
   "./styles.css",
   "./app.js",
   "./manifest.json",
@@ -13,7 +13,7 @@ const ASSETS = [
   "./images/96x96.png",
   "./images/72x72.png",
   "./images/48x48.png",
-  "./images/apple-touch-icon.png"
+  "./images/apple-touch-icon.png",
 ];
 
 // Instalación y almacenamiento en caché

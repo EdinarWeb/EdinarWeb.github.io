@@ -2,7 +2,7 @@
   "name": "Dia & Nit 24H - Turnos",
   "short_name": "Dia & Nit",
   "description": "Gestión de turnos y tareas para empleados de Dia & Nit 24H",
-  "start_url": "./index.html",
+  "start_url": "./https://dia-i-nit-organizador-de-tareas.netlify.app/",
   "display": "standalone",
   "background_color": "#5c38d6",
   "theme_color": "#3f2596",
