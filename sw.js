@@ -1,4 +1,4 @@
-const CACHE_NAME = "dianit-v7";
+const CACHE_NAME = "dianit-v3";
 const ASSETS = [
   "/",
   "/index.html",
@@ -20,7 +20,7 @@ const ASSETS = [
   "/images/apple-touch-icon.png",
 ];
 
-// 1. Instalación y precaché de recursos
+// Instalación y almacenamiento tolerante a fallos
 self.addEventListener("install", (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
@@ -28,7 +28,7 @@ self.addEventListener("install", (e) => {
         try {
           await cache.add(asset);
         } catch (err) {
-          console.warn(`No se pudo cachear el recurso inicial: ${asset}`, err);
+          console.warn(`No se pudo cachear el recurso: ${asset}`, err);
         }
       }
     }),
@@ -36,7 +36,7 @@ self.addEventListener("install", (e) => {
   self.skipWaiting();
 });
 
-// 2. Activación y limpieza de versiones viejas
+// Activación y limpieza de cachés antiguas
 self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
@@ -50,51 +50,9 @@ self.addEventListener("activate", (e) => {
   self.clients.claim();
 });
 
-// 3. Intercepción de peticiones (Robusta y sin errores no capturados)
+// Intercepción de peticiones para modo Offline
 self.addEventListener("fetch", (e) => {
-  // Ignorar peticiones que no sean GET
-  if (e.request.method !== "GET") return;
-
-  const url = new URL(e.request.url);
-
-  // IMPORTANTE: Filtrar y omitir esquemas que no sean HTTP/HTTPS (extensiones de Chrome, data:, etc.)
-  if (!url.protocol.startsWith("http")) return;
-
   e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      // Si está en caché, lo devuelve
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      // Si no está en caché, hace el fetch a la red capturando posibles errores
-      return fetch(e.request)
-        .then((networkResponse) => {
-          // Si la respuesta no es válida o proviene de una extensión/CORS opaco, simplemente la devuelve
-          if (
-            !networkResponse ||
-            networkResponse.status !== 200 ||
-            networkResponse.type !== "basic"
-          ) {
-            return networkResponse;
-          }
-
-          // Guardar copia en la caché dinámicamente
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(e.request, responseToCache);
-          });
-
-          return networkResponse;
-        })
-        .catch((err) => {
-          console.warn(`Fallo de red al solicitar: ${e.request.url}`, err);
-
-          // Si falla la red y es una navegación de página, devuelve la portada en caché
-          if (e.request.mode === "navigate") {
-            return caches.match("/");
-          }
-        });
-    }),
+    caches.match(e.request).then((response) => response || fetch(e.request)),
   );
 });

@@ -5,18 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="keywords"
-      content="Dia i Nit, Turnos, Tareas, Gestión, Empleados, Calendario, PWA, App, 24 horas"
+      content="Dìa i Nit, Turnos, Tareas, Gestión, Empleados, Calendario, PWA, App, 24 horas"
     />
     <meta name="author" content="Edinarweb" />
     <meta
       name="description"
       content="Aplicación de gestión de turnos y tareas para empleados de Dia & Nit 24H"
     />
-    <title>Dia i Nit 24 horas - Gestión de Turnos y Tareas</title>
+    <title>Dìa i Nit 24 horas - Gestión de Turnos y Tareas</title>
 
     <!-- Configuración PWA e iOS/Apple -->
-    <!-- Reemplaza la línea antigua del manifest por esta: -->
-    <link rel="manifest" href="manifest.webmanifest" type="application/manifest+json">
+    <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#3f2596" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -39,11 +38,12 @@
     <!-- Cabecera principal -->
     <header>
       <div class="logo">
-        <span>🛒 Dia i Nit 24 Horas</span>
+        <span>🛒 Dìa i Nit 24 Horas</span>
         <span class="badge-24h">Gestión de Turnos y Tareas</span>
       </div>
 
       <div class="header-actions">
+        <!-- Botón dinámico para instalar PWA (Se muestra si el navegador lo soporta) -->
         <button
           class="btn btn-install"
           id="installPwaBtn"
@@ -61,10 +61,14 @@
     <main>
       <div class="controls">
         <h2>Calendario de Turnos</h2>
+        <!-- Asegúrate de que este id sea exacto -->
         <div class="mobile-day-selector" id="mobileDaySelector"></div>
       </div>
 
-      <div class="calendar-grid" id="calendarGrid"></div>
+      <!-- Asegúrate de que este id sea exacto -->
+      <div class="calendar-grid" id="calendarGrid">
+        <!-- Se genera dinámicamente -->
+      </div>
     </main>
 
     <!-- Modal para Agregar Tarea -->

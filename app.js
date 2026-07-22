@@ -1,110 +1,110 @@
-// --- 1. REGISTRO Y DETECCIÓN ULTRA-RÁPIDA DE PWA ---
+// --- 1. REGISTRO DEL SERVICE WORKER (PWA) ---
 let deferredPrompt;
 const installPwaBtn = document.getElementById("installPwaBtn");
 
-// Registrar el Service Worker inmediatamente
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register("./sw.js")
-      .then((reg) => console.log("SW activo:", reg.scope))
-      .catch((err) => console.error("Error en SW:", err));
+      .then((reg) => console.log("Service Worker registrado con éxito", reg))
+      .catch((err) => console.error("Error al registrar SW:", err));
   });
 }
 
-// Capturar la disponibilidad de instalación (Android / Chrome)
+// Capturar el evento de instalación (Android/Chrome)
 window.addEventListener("beforeinstallprompt", (e) => {
-  // Prevenir que el navegador muestre el banner predeterminado feo
   e.preventDefault();
   deferredPrompt = e;
-
-  // Forzar la aparición de nuestro botón personalizado en el Header
-  if (installPwaBtn) {
-    installPwaBtn.style.display = "inline-flex";
-  }
+  if (installPwaBtn) installPwaBtn.style.display = "inline-flex";
 });
 
-// Evento al hacer clic en nuestro botón "Descargar App"
 if (installPwaBtn) {
   installPwaBtn.addEventListener("click", async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      console.log(`Respuesta de instalación: ${outcome}`);
       if (outcome === "accepted") {
         installPwaBtn.style.display = "none";
       }
       deferredPrompt = null;
-    } else {
-      // Si por alguna razón el prompt no responde, le da instrucciones directas al usuario
-      alert(
-        'Para instalar la App:\n\n1. Pulsa los 3 puntos del navegador (o el botón Compartir en iPhone).\n2. Selecciona "Añadir a la pantalla de inicio".',
-      );
     }
   });
 }
 
-// Ocultar botón si la App YA está instalada y ejecutándose en modo standalone
-window.addEventListener("DOMContentLoaded", () => {
-  if (
-    window.matchMedia("(display-mode: standalone)").matches ||
-    window.navigator.standalone === true
-  ) {
-    if (installPwaBtn) installPwaBtn.style.display = "none";
-  }
-});
-
-// --- 2. BASE DE DATOS LOCAL (IndexedDB) ---
-const DB_NAME = "DiaNitDB";
-const DB_VERSION = 1;
+// --- 2. CONFIGURACIÓN E INICIALIZACIÓN DE INDEXEDDB ---
+const DB_NAME = "Super24DB";
+const DB_VERSION = 6;
 const STORE_NAME = "tareas";
-let db;
+let db = null;
 
 function initDB() {
   return new Promise((resolve, reject) => {
+    if (db) return resolve(db);
+
     const request = indexedDB.open(DB_NAME, DB_VERSION);
+
     request.onupgradeneeded = (e) => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, {
+      const database = e.target.result;
+      if (!database.objectStoreNames.contains(STORE_NAME)) {
+        database.createObjectStore(STORE_NAME, {
           keyPath: "id",
           autoIncrement: true,
         });
       }
     };
+
     request.onsuccess = (e) => {
       db = e.target.result;
       resolve(db);
     };
-    request.onerror = (e) => reject("Error en DB:", e);
+
+    request.onerror = (e) => {
+      console.error("Error al abrir IndexedDB:", e.target.error);
+      reject(e.target.error);
+    };
   });
 }
 
-function addTaskToDB(taskData) {
-  return new Promise((resolve) => {
+async function addTaskToDB(taskData) {
+  if (!db) await initDB();
+
+  return new Promise((resolve, reject) => {
     const tx = db.transaction([STORE_NAME], "readwrite");
-    tx.objectStore(STORE_NAME).add(taskData);
-    tx.oncomplete = () => resolve();
+    const store = tx.objectStore(STORE_NAME);
+    const request = store.add(taskData);
+
+    request.onsuccess = () => resolve();
+    request.onerror = (e) => reject(e.target.error);
   });
 }
 
-function getAllTasksFromDB() {
-  return new Promise((resolve) => {
+async function getAllTasksFromDB() {
+  if (!db) await initDB();
+
+  return new Promise((resolve, reject) => {
     const tx = db.transaction([STORE_NAME], "readonly");
-    const req = tx.objectStore(STORE_NAME).getAll();
-    req.onsuccess = () => resolve(req.result);
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.getAll();
+
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = (e) => reject(e.target.error);
   });
 }
 
-function deleteTaskFromDB(id) {
-  return new Promise((resolve) => {
+async function deleteTaskFromDB(id) {
+  if (!db) await initDB();
+
+  return new Promise((resolve, reject) => {
     const tx = db.transaction([STORE_NAME], "readwrite");
-    tx.objectStore(STORE_NAME).delete(id);
-    tx.oncomplete = () => resolve();
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.delete(id);
+
+    req.onsuccess = () => resolve();
+    req.onerror = (e) => reject(e.target.error);
   });
 }
 
-// --- 3. INTERFAZ Y NAVEGACIÓN DÍA A DÍA ---
+// --- 3. INTERFAZ Y NAVEGACIÓN ---
 const diasSemana = [
   "Lunes",
   "Martes",
@@ -120,12 +120,16 @@ function renderLayout() {
   const calendarGrid = document.getElementById("calendarGrid");
   const mobileSelector = document.getElementById("mobileDaySelector");
 
-  if (!calendarGrid || !mobileSelector) return;
+  if (!calendarGrid || !mobileSelector) {
+    console.warn("No se encontraron 'calendarGrid' o 'mobileDaySelector' en el DOM.");
+    return;
+  }
 
   calendarGrid.innerHTML = "";
   mobileSelector.innerHTML = "";
 
   diasSemana.forEach((dia, index) => {
+    // Columna para el grid principal
     const col = document.createElement("div");
     col.className = `day-column ${index === currentSelectedDay ? "active-mobile" : ""}`;
     col.id = `column-day-${index}`;
@@ -135,6 +139,7 @@ function renderLayout() {
     `;
     calendarGrid.appendChild(col);
 
+    // Botón para la vista móvil
     const tab = document.createElement("button");
     tab.className = `day-tab ${index === currentSelectedDay ? "active" : ""}`;
     tab.innerText = dia;
@@ -145,84 +150,114 @@ function renderLayout() {
 
 function selectMobileDay(index) {
   currentSelectedDay = index;
-  document.querySelectorAll(".day-column").forEach((col, i) => {
-    col.classList.toggle("active-mobile", i === index);
-  });
-  document.querySelectorAll(".day-tab").forEach((tab, i) => {
-    tab.classList.toggle("active", i === index);
-  });
-}
 
-async function loadTasks() {
-  renderLayout();
-  const tasks = await getAllTasksFromDB();
+  // Actualizar columnas en móvil
+  diasSemana.forEach((_, i) => {
+    const col = document.getElementById(`column-day-${i}`);
+    if (col) {
+      if (i === index) {
+        col.classList.add("active-mobile");
+      } else {
+        col.classList.remove("active-mobile");
+      }
+    }
+  });
 
-  tasks.forEach((task) => {
-    const dayContainer = document.getElementById(`day-${task.day}`);
-    if (dayContainer) {
-      const card = document.createElement("div");
-      card.className = `task-card ${task.shift}`;
-      card.innerHTML = `
-        <div class="task-header">
-          <span class="employee-name">${escapeHTML(task.employee)}</span>
-          <span class="shift-tag">${task.shift}</span>
-        </div>
-        <div class="task-desc">${escapeHTML(task.task)}</div>
-        <div class="task-footer">
-          <button class="btn-delete" onclick="handleDeleteTask(${task.id})">Eliminar</button>
-        </div>
-      `;
-      dayContainer.appendChild(card);
+  // Actualizar pestañas móviles
+  const tabs = document.querySelectorAll(".day-tab");
+  tabs.forEach((tab, i) => {
+    if (i === index) {
+      tab.classList.add("active");
+    } else {
+      tab.classList.remove("active");
     }
   });
 }
 
-function escapeHTML(str) {
-  return str.replace(
-    /[&<>'"]/g,
-    (tag) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[
-        tag
-      ] || tag,
-  );
-}
+async function loadTasks() {
+  try {
+    const tasks = await getAllTasksFromDB();
 
-// --- 4. EVENTOS DEL FORMULARIO Y MODAL ---
-const taskModal = document.getElementById("taskModal");
-const openModalBtn = document.getElementById("openModalBtn");
-const closeModalBtn = document.getElementById("closeModalBtn");
-
-if (openModalBtn)
-  openModalBtn.onclick = () => taskModal.classList.add("active");
-if (closeModalBtn)
-  closeModalBtn.onclick = () => taskModal.classList.remove("active");
-
-const taskForm = document.getElementById("taskForm");
-if (taskForm) {
-  taskForm.onsubmit = async (e) => {
-    e.preventDefault();
-    const dayValue = parseInt(document.getElementById("day").value);
-
-    await addTaskToDB({
-      employee: document.getElementById("employee").value.trim(),
-      day: dayValue,
-      shift: document.getElementById("shift").value,
-      task: document.getElementById("task").value.trim(),
+    // Limpiar contenedores de tareas
+    diasSemana.forEach((_, index) => {
+      const dayContainer = document.getElementById(`day-${index}`);
+      if (dayContainer) dayContainer.innerHTML = "";
     });
 
-    taskForm.reset();
-    taskModal.classList.remove("active");
-    selectMobileDay(dayValue);
-    loadTasks();
-  };
+    // Renderizar cada tarea en su respectivo día
+    tasks.forEach((item) => {
+      const dayContainer = document.getElementById(`day-${item.day}`);
+      if (!dayContainer) return;
+
+      const shiftLabel = item.shift === "manana" ? "Mañana" : "Tarde";
+
+      const card = document.createElement("div");
+      card.className = `task-card ${item.shift}`;
+      card.innerHTML = `
+        <div class="task-header">
+          <span class="employee-name">${item.employee}</span>
+          <span class="shift-tag">${shiftLabel}</span>
+        </div>
+        <div class="task-desc">${item.task}</div>
+        <div class="task-footer">
+          <button class="btn-delete" onclick="deleteTask(${item.id})">🗑️ Eliminar</button>
+        </div>
+      `;
+
+      dayContainer.appendChild(card);
+    });
+  } catch (err) {
+    console.error("Error al cargar tareas:", err);
+  }
 }
 
-window.handleDeleteTask = async (id) => {
-  if (confirm("¿Deseas eliminar esta tarea?")) {
+async function deleteTask(id) {
+  if (confirm("¿Seguro que deseas eliminar esta tarea?")) {
     await deleteTaskFromDB(id);
-    loadTasks();
+    await loadTasks();
   }
-};
+}
 
-// Arrancar la app
-initDB().then(() => loadTasks());
+// --- 4. INICIALIZACIÓN CUANDO EL DOM ESTÉ LISTO ---
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. Dibujar estructura inicial del calendario
+  renderLayout();
+
+  // 2. Configurar modal y formulario
+  const openBtn = document.getElementById("openModalBtn");
+  const closeBtn = document.getElementById("closeModalBtn");
+  const taskModal = document.getElementById("taskModal");
+  const taskForm = document.getElementById("taskForm");
+
+  if (openBtn && taskModal) {
+    openBtn.onclick = () => taskModal.classList.add("active");
+  }
+
+  if (closeBtn && taskModal) {
+    closeBtn.onclick = () => taskModal.classList.remove("active");
+  }
+
+  if (taskForm) {
+    taskForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const dayValue = parseInt(document.getElementById("day").value);
+
+      await addTaskToDB({
+        employee: document.getElementById("employee").value.trim(),
+        day: dayValue,
+        shift: document.getElementById("shift").value,
+        task: document.getElementById("task").value.trim(),
+      });
+
+      taskForm.reset();
+      if (taskModal) taskModal.classList.remove("active");
+      selectMobileDay(dayValue);
+      await loadTasks();
+    };
+  }
+
+  // 3. Inicializar DB y cargar tareas guardadas
+  initDB()
+    .then(() => loadTasks())
+    .catch((err) => console.error("Error al iniciar DB:", err));
+});

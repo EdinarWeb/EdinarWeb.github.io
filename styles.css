@@ -1,24 +1,31 @@
 :root {
-  /* --- PALETA DE COLORES PREMIUM --- */
-  --bg-app: #5c38d6;
-  --bg-panel: #4e2eb9;
-  --bg-panel-dark: #3f2596;
+  /* --- PALETA DE COLORES PREMIUM (Basado en Logo 'Dia & Nit') --- */
   
+  /* Fondos - Violeta de marca refinado */
+  --bg-app: #5c38d6;           /* Violeta vibrante principal */
+  --bg-panel: #4e2eb9;         /* Violeta ligeramente más oscuro para paneles */
+  --bg-panel-dark: #3f2596;    /* Violeta profundo para header */
+  
+  /* Acento - Amarillo Oro de marca */
   --accent-gold: #fedd3b;
   --accent-gold-hover: #f1cf1d;
   
-  --card-bg: #ffffff;
-  --card-text-main: #1e293b;
-  --card-text-muted: #64748b;
-  --card-border: #e2e8f0;
+  /* Tarjetas de Tarea (UI Refinada) */
+  --card-bg: #ffffff;          /* Fondo blanco puro para contraste */
+  --card-text-main: #1e293b;  /* Gris muy oscuro para legibilidad */
+  --card-text-muted: #64748b; /* Gris medio para descripciones */
+  --card-border: #e2e8f0;     /* Borde gris muy sutil */
   
+  /* Texto sobre fondos violetas */
   --text-on-violet: #ffffff;
   --text-on-violet-muted: #c7b8ea;
   
-  --turno-manana: #f97316;
-  --turno-tarde: #2563eb;
-  --turno-noche: #7e22ce;
+  /* Colores de Turno Mejorados (Más vibrantes) */
+  --turno-manana: #f97316;    /* Naranja vibrante */
+  --turno-tarde: #2563eb;     /* Azul real */
+  --turno-noche: #7e22ce;     /* Púrpura intenso */
   
+  /* Semánticos */
   --danger: #ef4444;
   --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
   --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.2), 0 4px 6px -2px rgba(0,0,0,0.1);
@@ -43,7 +50,7 @@ body {
   flex-direction: column;
 }
 
-/* --- HEADER PRINCIPAL --- */
+/* --- HEADER PRINCIPAL (Diseño Elevado) --- */
 header {
   background-color: var(--bg-panel-dark);
   border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -62,6 +69,31 @@ header {
   gap: 0.5rem;
 }
 
+.btn {
+  background: linear-gradient(135deg, var(--accent-gold), #f9cf15);
+  color: #1e293b;
+  border: none;
+  padding: 0.65rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-install {
+  background: #10b981;
+  color: white;
+}
+
 .logo {
   display: flex;
   align-items: center;
@@ -78,7 +110,7 @@ header {
   color: white;
   font-size: 0.7rem;
   padding: 0.25rem 0.6rem;
-  border-radius: 99px;
+  border-radius: 99px; /* Forma de píldora */
   text-transform: uppercase;
   font-weight: 800;
   box-shadow: var(--shadow-sm);
@@ -111,11 +143,6 @@ header {
   transform: translateY(1px);
 }
 
-.btn-install {
-  background: #10b981;
-  color: white;
-}
-
 /* --- CONTENIDO PRINCIPAL --- */
 main {
   padding: 2.5rem 2rem;
@@ -138,37 +165,13 @@ main {
   color: var(--accent-gold);
 }
 
-/* --- SELECTOR DÍAS MÓVIL --- */
-.mobile-day-selector {
-  display: none;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding-top: 1rem;
-  padding-bottom: 0.5rem;
-}
-
-.day-tab {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: white;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: var(--transition);
-}
-
-.day-tab.active {
-  background: var(--accent-gold);
-  color: #1e293b;
-}
-
-/* --- CALENDARIO GRID --- */
+/* --- CALENDARIO GRID (Diseño Neumórfico Suave) --- */
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 1.25rem;
+  overflow-x: auto;
+  padding-bottom: 1rem; /* Espacio para el scrollbar móvil */
 }
 
 .day-column {
@@ -184,7 +187,7 @@ main {
 
 .day-column:hover {
   border-color: rgba(255,255,255,0.1);
-  background-color: #5332c9;
+  background-color: #5332c9; /* Ligeramente más claro en hover */
 }
 
 .day-header {
@@ -211,12 +214,13 @@ main {
   gap: 1rem;
 }
 
-/* --- TARJETAS DE TAREA --- */
+/* --- TARJETAS DE TAREA REFINADAS (Estilo Premium Blanca) --- */
 .task-card {
   background-color: var(--card-bg);
   color: var(--card-text-main);
   border-radius: 12px;
   padding: 1.25rem;
+  /* El borde de turno ahora es más sutil y en la parte superior */
   border-top: 4px solid var(--accent-gold); 
   box-shadow: var(--shadow-md);
   position: relative;
@@ -231,6 +235,7 @@ main {
   box-shadow: 0 15px 30px rgba(0,0,0,0.25);
 }
 
+/* Colores identificativos por turno en el borde superior */
 .task-card.manana { border-top-color: var(--turno-manana); }
 .task-card.tarde { border-top-color: var(--turno-tarde); }
 .task-card.noche { border-top-color: var(--turno-noche); }
@@ -248,6 +253,7 @@ main {
   color: #0f172a;
 }
 
+/* Burbuja de Turno Elegante */
 .shift-tag {
   font-size: 0.65rem;
   padding: 0.3rem 0.6rem;
@@ -255,9 +261,10 @@ main {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: white;
+  color: white; /* Texto blanco siempre */
 }
 
+/* Colores de fondo para las burbujas de turno */
 .task-card.manana .shift-tag { background-color: var(--turno-manana); }
 .task-card.tarde .shift-tag { background-color: var(--turno-tarde); }
 .task-card.noche .shift-tag { background-color: var(--turno-noche); }
@@ -282,7 +289,7 @@ main {
 .btn-delete {
   background: none;
   border: none;
-  color: #94a3b8;
+  color: #94a3b8; /* Gris suave por defecto */
   cursor: pointer;
   transition: var(--transition);
   font-weight: 600;
@@ -292,14 +299,14 @@ main {
 
 .btn-delete:hover { 
   color: var(--danger);
-  background-color: rgba(239, 68, 68, 0.1);
+  background-color: rgba(239, 68, 68, 0.1); /* Fondo rojo suave on hover */
 }
 
-/* --- MODAL --- */
+/* --- MODAL (Diseño Dramático y Enfocado) --- */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.9); /* Fondo oscuro profundo */
   backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
@@ -317,7 +324,7 @@ main {
 
 .modal {
   background-color: var(--bg-panel-dark);
-  border: 2px solid var(--accent-gold);
+  border: 2px solid var(--accent-gold); /* Borde dorado destacado */
   border-radius: 20px;
   width: 90%;
   max-width: 500px;
@@ -356,7 +363,7 @@ main {
 .form-control {
   width: 100%;
   padding: 0.8rem 1rem;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0,0,0,0.2); /* Fondo input oscuro */
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 10px;
   color: white;
@@ -373,7 +380,7 @@ main {
 
 select.form-control {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3Sample%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 1rem center;
   background-size: 1.2rem;
@@ -387,7 +394,7 @@ select.form-control {
 }
 
 .modal-actions .btn {
-  flex: 1;
+  flex: 1; /* Botones del mismo ancho */
   justify-content: center;
 }
 
@@ -406,22 +413,19 @@ select.form-control {
   box-shadow: none;
 }
 
-/* --- RESPONSIVE --- */
-@media (max-width: 1024px) {
-  .mobile-day-selector {
-    display: flex;
-  }
-
+/* --- RESPONSIVE (ADAPTABILIDAD MÓVIL) --- */
+@media (max-width: 1200px) {
   .calendar-grid {
-    grid-template-columns: 1fr;
+    gap: 1rem;
   }
+}
 
+@media (max-width: 1024px) {
+  .calendar-grid {
+    grid-template-columns: repeat(1, 1fr); /* Una columna en móvil/tablet */
+  }
   .day-column {
-    display: none;
     min-height: auto;
-  }
-
-  .day-column.active-mobile {
-    display: flex;
+    margin-bottom: 1.5rem;
   }
 }

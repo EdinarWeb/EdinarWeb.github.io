@@ -1,21 +1,29 @@
 {
-  "id": "/dianit-app",
-  "name": "Dia & Nit 24H",
+  "name": "Dia & Nit 24H - Turnos",
   "short_name": "Dia & Nit",
-  "start_url": "./index.html",
+  "description": "Gestión de turnos y tareas para empleados de Dia & Nit 24H",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#5c38d6",
   "theme_color": "#3f2596",
+  "orientation": "any",
   "icons": [
     {
-      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAnSURBVHgB7cEBDQEAAAMg71/7m+EN2AAAAAAAAAAAAAAAAAAAAL4M7i4AAbNq3u4AAAAASUVORK5CYII=",
-      "sizes": "192x192",
+      "src": "/images/512x512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
       "src": "/images/384x384.png",
       "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/192x192.png",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
