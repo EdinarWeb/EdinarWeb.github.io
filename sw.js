@@ -1,7 +1,7 @@
 const CACHE_NAME = "dianit-v3";
 const ASSETS = [
   "/",
-  "/https://dia-i-nit-organizador-de-tareas.netlify.app/",
+  "/index.html",
   "/styles.css",
   "/app.js",
   "/manifest.json",
