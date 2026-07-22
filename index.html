@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="keywords"
-      content="Dìa i Nit, Turnos, Tareas, Gestión, Empleados, Calendario, PWA, App, 24 horas"
+      content="Dia i Nit, Turnos, Tareas, Gestión, Empleados, Calendario, PWA, App, 24 horas"
     />
     <meta name="author" content="Edinarweb" />
     <meta
       name="description"
       content="Aplicación de gestión de turnos y tareas para empleados de Dia & Nit 24H"
     />
-    <title>Dìa i Nit 24 horas - Gestión de Turnos y Tareas</title>
+    <title>Dia i Nit 24 horas - Gestión de Turnos y Tareas</title>
 
     <!-- Configuración PWA e iOS/Apple -->
     <link rel="manifest" href="manifest.json" />
@@ -38,12 +38,11 @@
     <!-- Cabecera principal -->
     <header>
       <div class="logo">
-        <span>🛒 Dìa i Nit 24 Horas</span>
+        <span>🛒 Dia i Nit 24 Horas</span>
         <span class="badge-24h">Gestión de Turnos y Tareas</span>
       </div>
 
       <div class="header-actions">
-        <!-- Botón dinámico para instalar PWA (Se muestra si el navegador lo soporta) -->
         <button
           class="btn btn-install"
           id="installPwaBtn"
@@ -60,12 +59,11 @@
     <!-- Contenedor del Calendario -->
     <main>
       <div class="controls">
-        <h2>Calendario Semanal de Empleados</h2>
+        <h2>Calendario de Turnos</h2>
+        <div class="mobile-day-selector" id="mobileDaySelector"></div>
       </div>
 
-      <div class="calendar-grid" id="calendarGrid">
-        <!-- Se genera dinámicamente mediante app.js -->
-      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
     </main>
 
     <!-- Modal para Agregar Tarea -->
@@ -127,6 +125,6 @@
     </div>
 
     <!-- Lógica JavaScript -->
-    <script src="app.js"></script>
+    <script src="app.js" defer></script>
   </body>
 </html>
