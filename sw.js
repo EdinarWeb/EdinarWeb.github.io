@@ -20,39 +20,14 @@ const ASSETS = [
   "/images/apple-touch-icon.png",
 ];
 
-// Instalación y almacenamiento tolerante a fallos
-self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      for (const asset of ASSETS) {
-        try {
-          await cache.add(asset);
-        } catch (err) {
-          console.warn(`No se pudo cachear el recurso: ${asset}`, err);
-        }
-      }
-    }),
-  );
+self.addEventListener('install', (e) => {
   self.skipWaiting();
 });
 
-// Activación y limpieza de cachés antiguas
-self.addEventListener("activate", (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => caches.delete(key)),
-      );
-    }),
-  );
+self.addEventListener('activate', (e) => {
   self.clients.claim();
 });
 
-// Intercepción de peticiones para modo Offline
-self.addEventListener("fetch", (e) => {
-  e.respondWith(
-    caches.match(e.request).then((response) => response || fetch(e.request)),
-  );
+self.addEventListener('fetch', (e) => {
+  e.respondWith(fetch(e.request));
 });
