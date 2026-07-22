@@ -33,7 +33,7 @@ if (installPwaBtn) {
 
 // --- 1. CONFIGURACIÓN E INICIALIZACIÓN DE INDEXEDDB ---
 const DB_NAME = "Super24DB";
-const DB_VERSION = 3;
+const DB_VERSION = 6;
 const STORE_NAME = "tareas";
 let db;
 
