@@ -1,0 +1,5 @@
+/manifest.json
+  Content-Type: application/json; charset=utf-8
+
+/sw.js
+  Content-Type: application/javascript; charset=utf-8
