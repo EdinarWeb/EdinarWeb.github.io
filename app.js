@@ -33,18 +33,20 @@ if (installPwaBtn) {
 
 // --- 1. CONFIGURACIÓN E INICIALIZACIÓN DE INDEXEDDB ---
 const DB_NAME = "Super24DB";
-const DB_VERSION = 6;
+const DB_VERSION = 3;
 const STORE_NAME = "tareas";
-let db;
+let db = null;
 
 function initDB() {
   return new Promise((resolve, reject) => {
+    if (db) return resolve(db); // Si ya está lista, la devuelve directamente
+
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onupgradeneeded = (e) => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, {
+      const database = e.target.result;
+      if (!database.objectStoreNames.contains(STORE_NAME)) {
+        database.createObjectStore(STORE_NAME, {
           keyPath: "id",
           autoIncrement: true,
         });
@@ -56,42 +58,53 @@ function initDB() {
       resolve(db);
     };
 
-    request.onerror = (e) => reject("Error al abrir la base de datos:", e);
+    request.onerror = (e) => {
+      console.error("Error al abrir IndexedDB:", e.target.error);
+      reject(e.target.error);
+    };
   });
 }
 
-// Operaciones CRUD en IndexedDB
-function addTaskToDB(taskData) {
+async function addTaskToDB(taskData) {
+  if (!db) await initDB(); // Garantiza que db esté lista antes de operar
+
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORE_NAME], "readwrite");
-    const store = transaction.objectStore(STORE_NAME);
+    const tx = db.transaction([STORE_NAME], "readwrite");
+    const store = tx.objectStore(STORE_NAME);
     const request = store.add(taskData);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-}
 
-function getAllTasksFromDB() {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORE_NAME], "readonly");
-    const store = transaction.objectStore(STORE_NAME);
-    const request = store.getAll();
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-}
-
-function deleteTaskFromDB(id) {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORE_NAME], "readwrite");
-    const store = transaction.objectStore(STORE_NAME);
-    const request = store.delete(id);
     request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
+    request.onerror = (e) => reject(e.target.error);
   });
 }
 
-// --- 2. GESTIÓN DE LA INTERFAZ DE USUARIO (UI) ---
+async function getAllTasksFromDB() {
+  if (!db) await initDB();
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction([STORE_NAME], "readonly");
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.getAll();
+
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = (e) => reject(e.target.error);
+  });
+}
+
+async function deleteTaskFromDB(id) {
+  if (!db) await initDB();
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction([STORE_NAME], "readwrite");
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.delete(id);
+
+    req.onsuccess = () => resolve();
+    req.onerror = (e) => reject(e.target.error);
+  });
+}
+
+// --- 3. INTERFAZ Y NAVEGACIÓN ---
 const diasSemana = [
   "Lunes",
   "Martes",
@@ -101,55 +114,70 @@ const diasSemana = [
   "Sábado",
   "Domingo",
 ];
-const calendarGrid = document.getElementById("calendarGrid");
-const taskModal = document.getElementById("taskModal");
-const openModalBtn = document.getElementById("openModalBtn");
-const closeModalBtn = document.getElementById("closeModalBtn");
-const taskForm = document.getElementById("taskForm");
+let currentSelectedDay = 0;
 
-// Generar estructura vacía del calendario
 function renderLayout() {
+  const calendarGrid = document.getElementById("calendarGrid");
+  const mobileSelector = document.getElementById("mobileDaySelector");
+
   calendarGrid.innerHTML = "";
+  mobileSelector.innerHTML = "";
+
   diasSemana.forEach((dia, index) => {
     const col = document.createElement("div");
-    col.className = "day-column";
+    col.className = `day-column ${index === currentSelectedDay ? "active-mobile" : ""}`;
+    col.id = `column-day-${index}`;
     col.innerHTML = `
-      <div class="day-header">
-        <span class="day-name">${dia}</span>
-      </div>
+      <div class="day-header"><span class="day-name">${dia}</span></div>
       <div class="day-tasks" id="day-${index}"></div>
     `;
     calendarGrid.appendChild(col);
+
+    const tab = document.createElement("button");
+    tab.className = `day-tab ${index === currentSelectedDay ? "active" : ""}`;
+    tab.innerText = dia;
+    tab.onclick = () => selectMobileDay(index);
+    mobileSelector.appendChild(tab);
   });
 }
 
-// Cargar y mostrar tareas guardadas
+function selectMobileDay(index) {
+  currentSelectedDay = index;
+  document.querySelectorAll(".day-column").forEach((col, i) => {
+    col.classList.toggle("active-mobile", i === index);
+  });
+  document.querySelectorAll(".day-tab").forEach((tab, i) => {
+    tab.classList.toggle("active", i === index);
+  });
+}
+
 async function loadTasks() {
   renderLayout();
-  const tasks = await getAllTasksFromDB();
-
-  tasks.forEach((task) => {
-    const dayContainer = document.getElementById(`day-${task.day}`);
-    if (dayContainer) {
-      const card = document.createElement("div");
-      card.className = `task-card ${task.shift}`;
-      card.innerHTML = `
-        <div class="task-header">
-          <span class="employee-name">${escapeHTML(task.employee)}</span>
-          <span class="shift-tag">${task.shift}</span>
-        </div>
-        <div class="task-desc">${escapeHTML(task.task)}</div>
-        <div class="task-footer">
-          <span></span>
-          <button class="btn-delete" onclick="handleDeleteTask(${task.id})">Eliminar</button>
-        </div>
-      `;
-      dayContainer.appendChild(card);
-    }
-  });
+  try {
+    const tasks = await getAllTasksFromDB();
+    tasks.forEach((task) => {
+      const dayContainer = document.getElementById(`day-${task.day}`);
+      if (dayContainer) {
+        const card = document.createElement("div");
+        card.className = `task-card ${task.shift}`;
+        card.innerHTML = `
+          <div class="task-header">
+            <span class="employee-name">${escapeHTML(task.employee)}</span>
+            <span class="shift-tag">${task.shift}</span>
+          </div>
+          <div class="task-desc">${escapeHTML(task.task)}</div>
+          <div class="task-footer">
+            <button class="btn-delete" onclick="handleDeleteTask(${task.id})">Eliminar</button>
+          </div>
+        `;
+        dayContainer.appendChild(card);
+      }
+    });
+  } catch (err) {
+    console.error("Error cargando tareas:", err);
+  }
 }
 
-// Sanitización contra vulnerabilidades XSS
 function escapeHTML(str) {
   return str.replace(
     /[&<>'"]/g,
@@ -160,37 +188,43 @@ function escapeHTML(str) {
   );
 }
 
-// --- 3. EVENTOS DE INTERACCIÓN ---
-openModalBtn.addEventListener("click", () => taskModal.classList.add("active"));
-closeModalBtn.addEventListener("click", () =>
-  taskModal.classList.remove("active"),
-);
-
-taskForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const newTask = {
-    employee: document.getElementById("employee").value.trim(),
-    day: parseInt(document.getElementById("day").value),
-    shift: document.getElementById("shift").value,
-    task: document.getElementById("task").value.trim(),
-  };
-
-  await addTaskToDB(newTask);
-  taskForm.reset();
+// --- 4. EVENTOS ---
+const taskModal = document.getElementById("taskModal");
+document.getElementById("openModalBtn").onclick = () =>
+  taskModal.classList.add("active");
+document.getElementById("closeModalBtn").onclick = () =>
   taskModal.classList.remove("active");
-  loadTasks();
-});
 
-// Función global para eliminar tareas
-window.handleDeleteTask = async (id) => {
-  if (confirm("¿Estás seguro de que deseas eliminar esta tarea?")) {
-    await deleteTaskFromDB(id);
-    loadTasks();
+document.getElementById("taskForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const dayValue = parseInt(document.getElementById("day").value);
+
+  try {
+    await addTaskToDB({
+      employee: document.getElementById("employee").value.trim(),
+      day: dayValue,
+      shift: document.getElementById("shift").value,
+      task: document.getElementById("task").value.trim(),
+    });
+
+    document.getElementById("taskForm").reset();
+    taskModal.classList.remove("active");
+    selectMobileDay(dayValue);
+    await loadTasks();
+  } catch (err) {
+    alert("Error al guardar la tarea. Por favor reintenta.");
+    console.error(err);
   }
 };
 
-// Inicialización
-initDB().then(() => {
-  loadTasks();
-});
+window.handleDeleteTask = async (id) => {
+  if (confirm("¿Deseas eliminar esta tarea?")) {
+    await deleteTaskFromDB(id);
+    await loadTasks();
+  }
+};
+
+// Inicialización segura
+initDB()
+  .then(() => loadTasks())
+  .catch((err) => console.error("Error de inicio:", err));
