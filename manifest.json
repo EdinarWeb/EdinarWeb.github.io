@@ -34,6 +34,12 @@
       "purpose": "any maskable"
     },
     {
+      "src": "/images/92x92.png",
+      "sizes": "92x92",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
       "src": "/images/72x72.png",
       "sizes": "72x72",
       "type": "image/png",
@@ -47,8 +53,26 @@
     },
     {
       "src": "/images/apple-touch-icon.png",
-      "sizes": "192x192",
+      "sizes": "180x180",
       "type": "image/png"
+    },
+    {
+      "src": "/images/1575x1575.png",
+      "sizes": "1575x1575",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/icon.png",
+      "sizes": "1759x2027",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
