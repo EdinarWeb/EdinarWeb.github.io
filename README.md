@@ -19,6 +19,8 @@ Una **Progressive Web App (PWA)** moderna, responsiva e instalable en dispositiv
 ## 📂 Estructura del Proyecto
 
 ```text
+├── images/          # Carpta donde se encuentran todas las imagenes del proyecto
+├── favicon.ico      # icono
 ├── index.html       # Estructura principal y meta-etiquetas PWA
 ├── styles.css       # Estilos CSS responsivos, temas y variables
 ├── app.js           # Lógica de tareas, IndexedDB y registro PWA
