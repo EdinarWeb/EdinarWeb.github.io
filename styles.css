@@ -64,6 +64,36 @@ header {
   z-index: 100;
 }
 
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn {
+  background: linear-gradient(135deg, var(--accent-gold), #f9cf15);
+  color: #1e293b;
+  border: none;
+  padding: 0.65rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-install {
+  background: #10b981;
+  color: white;
+}
+
 .logo {
   display: flex;
   align-items: center;
