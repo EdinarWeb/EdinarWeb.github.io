@@ -1,0 +1,5 @@
+.task-badge { display: grid; gap: var(--space-1); width: 100%; margin-top: var(--space-2); padding: .4rem .5rem; overflow: hidden; border: 0; border-radius: var(--radius-xs); background: var(--brand-primary); color: var(--on-primary); cursor: pointer; font-size: var(--font-size-xs); line-height: 1.25; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
+.task-badge:hover { filter: brightness(1.04); transform: scale(1.02); }
+.task-badge.low { background: var(--semantic-success); }.task-badge.medium { background: var(--brand-secondary); color: var(--text-primary); }.task-badge.high { background: var(--semantic-warning); }.task-badge.urgent { background: var(--semantic-danger); }
+.task-badge.completed { box-shadow: inset .25rem 0 0 var(--semantic-success); opacity: .68; }.task-badge.completed .task-title { text-decoration: line-through; }
+.task-employee { overflow: hidden; color: currentColor; font-size: .625rem; font-weight: 800; letter-spacing: .045em; text-overflow: ellipsis; text-transform: uppercase; }

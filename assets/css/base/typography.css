@@ -1,0 +1,5 @@
+body { font-family: var(--font-family-base); font-size: var(--font-size-base); line-height: var(--line-height-base); letter-spacing: -.01em; }
+h1, h2, h3 { line-height: 1.15; letter-spacing: -.035em; }
+h1 { font-size: var(--font-size-2xl); }
+h2 { font-size: var(--font-size-xl); }
+small { color: var(--text-secondary); font-size: var(--font-size-sm); }

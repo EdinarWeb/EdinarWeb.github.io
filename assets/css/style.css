@@ -1,0 +1,23 @@
+@import url("base/variables.css");
+@import url("base/reset.css");
+@import url("base/typography.css");
+@import url("base/animations.css");
+@import url("base/utilities.css");
+
+@import url("layout/sidebar.css");
+@import url("layout/header.css");
+@import url("layout/dashboard.css");
+
+@import url("components/button.css");
+@import url("components/card.css");
+@import url("components/badge.css");
+@import url("components/form.css");
+@import url("components/modal.css");
+
+@import url("pages/calendar.css");
+@import url("pages/employees.css");
+@import url("pages/tasks.css");
+
+@import url("responsive/mobile.css");
+@import url("responsive/tablet.css");
+@import url("responsive/desktop.css");

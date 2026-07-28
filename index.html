@@ -1,135 +1,57 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="keywords"
-      content="Dìa i Nit, Turnos, Tareas, Gestión, Empleados, Calendario, PWA, App, 24 horas"
-    />
-    <meta name="author" content="Edinarweb" />
-    <meta
-      name="description"
-      content="Aplicación de gestión de turnos y tareas para empleados de Dia & Nit 24H"
-    />
-    <title>Dìa i Nit 24 horas - Gestión de Turnos y Tareas</title>
-
-    <!-- Configuración PWA e iOS/Apple -->
-    <link rel="manifest" href="./manifest.json" />
-    <meta name="theme-color" content="#3f2596" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
-    <meta name="apple-mobile-web-app-title" content="Dia & Nit" />
-
-    <!-- Fuente externa -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Hoja de estilos -->
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <!-- Cabecera principal -->
-    <header>
-      <div class="logo">
-        <span>🛒 Dìa i Nit 24 Horas</span>
-        <span class="badge-24h">Gestión de Turnos y Tareas</span>
-      </div>
-
-      <div class="header-actions">
-        <!-- Botón dinámico para instalar PWA (Se muestra si el navegador lo soporta) -->
-        <button
-          class="btn btn-install"
-          id="installPwaBtn"
-          style="display: none"
-        >
-          📲 Descargar App
-        </button>
-        <button class="btn" id="openModalBtn">
-          <span>+</span> Asignar Turno / Tarea
-        </button>
-      </div>
-    </header>
-
-    <!-- Contenedor del Calendario -->
-    <main>
-  <div class="controls">
-    <h2>Calendario de Turnos</h2>
-    <!-- Asegúrate de que este id sea exacto -->
-    <div class="mobile-day-selector" id="mobileDaySelector"></div>
-  </div>
-
-  <!-- Asegúrate de que este id sea exacto -->
-  <div class="calendar-grid" id="calendarGrid">
-    <!-- Se genera dinámicamente -->
-  </div>
-</main>
-
-    <!-- Modal para Agregar Tarea -->
-    <div class="modal-overlay" id="taskModal">
-      <div class="modal">
-        <h3 class="modal-title">Asignar Tarea</h3>
-        <form id="taskForm">
-          <div class="form-group">
-            <label for="employee">Empleado</label>
-            <input
-              type="text"
-              id="employee"
-              class="form-control"
-              placeholder="Ej: María García"
-              required
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="day">Día de la Semana</label>
-            <select id="day" class="form-control" required>
-              <option value="0">Lunes</option>
-              <option value="1">Martes</option>
-              <option value="2">Miércoles</option>
-              <option value="3">Jueves</option>
-              <option value="4">Viernes</option>
-              <option value="5">Sábado</option>
-              <option value="6">Domingo</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="shift">Turno (24H)</label>
-            <select id="shift" class="form-control" required>
-              <option value="manana">Mañana (08:00 - 15:30)</option>
-              <option value="tarde">Tarde (19:00 - 23:00)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="task">Tarea Principal</label>
-            <textarea
-              id="task"
-              class="form-control"
-              rows="3"
-              placeholder="Ej: Reposición de lácteos y cobro en caja"
-              required
-            ></textarea>
-          </div>
-
-          <div class="modal-actions">
-            <button type="button" class="btn btn-secondary" id="closeModalBtn">
-              Cancelar
-            </button>
-            <button type="submit" class="btn">Guardar</button>
-          </div>
-        </form>
-      </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#5B2DCB">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="description" content="Gestión local de tareas y empleados para Dia & Nit.">
+    <title>Dia & Nit — Gestión de tareas</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="assets/icons/icon-192.png" sizes="192x192" type="image/png">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div id="app">
+        <aside id="sidebar" aria-label="Navegación principal">
+            <div class="logo">
+                <h1>Dia & Nit</h1>
+                <p>Gestión de tareas</p>
+                <!-- <button id="employeesButton" class="header-button" type="button">Empleados</button> -->
+            </div>
+            <nav>
+                <ul class="menu">
+                    <li class="active"><a href="#content" aria-current="page"><span aria-hidden="true">⌂</span><span>Inicio</span></a></li>
+                    <li><a href="#calendar"><span aria-hidden="true">◫</span><span>Calendario</span></a></li>
+                    <li><a href="#content"><span aria-hidden="true">✓</span><span>Tareas</span></a></li>
+                    <li><button class="menu-button" type="button" data-open-employees><span aria-hidden="true">♙</span><span>Empleados</span></button></li>
+                </ul>
+            </nav>
+        </aside>
+        <main id="main">
+            <header id="header">
+                <div><h2>Dashboard</h2></div>
+                <div><label class="sr-only" for="search">Buscar tareas</label><input id="search" type="search" placeholder="Buscar tareas…" autocomplete="off"></div>
+                <div class="header-actions">
+                    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Cambiar tema" title="Cambiar tema">◐</button>
+                    <div id="today" aria-live="polite"></div>
+                </div>
+            </header>
+            <section id="content" aria-labelledby="summaryTitle">
+                <h2 id="summaryTitle">Resumen</h2>
+                <div class="stats">
+                    <button class="stat-card" id="cardToday" type="button"><span>Tareas hoy</span><strong id="todayTasks">0</strong></button>
+                    <button class="stat-card" id="cardPending" type="button"><span>Pendientes</span><strong id="pendingTasks">0</strong></button>
+                    <button class="stat-card" id="cardCompleted" type="button"><span>Completadas</span><strong id="completedTasks">0</strong></button>
+                    <button class="stat-card" id="cardEmployees" type="button"><span>Empleados</span><strong id="employeeCount">0</strong></button>
+                </div>
+                <div class="calendar-placeholder"><div id="calendar"></div></div>
+            </section>
+        </main>
     </div>
-
-    <!-- Lógica JavaScript -->
-   <script src="app.js" defer></script>
+    <script type="module" src="assets/js/core/app.js"></script>
 </body>
 </html>

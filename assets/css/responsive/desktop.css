@@ -1,0 +1,1 @@
+@media (min-width: 100rem) { #header { padding-inline: clamp(var(--space-10), 6vw, 7rem); } #content { padding-block: clamp(var(--space-10), 5vw, 5rem); } .calendar-placeholder { padding: var(--space-10); } }

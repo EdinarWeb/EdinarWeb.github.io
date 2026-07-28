@@ -1,0 +1,6 @@
+#main { min-width: 0; }
+#header { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); min-height: 5.25rem; padding: var(--space-4) clamp(var(--space-5), 4vw, var(--space-10)); background: color-mix(in srgb, var(--surface-base) 88%, transparent); border-bottom: 1px solid var(--border-subtle); backdrop-filter: blur(1rem); }
+#header h2 { font-weight: 800; }
+.header-actions { display: flex; align-items: center; gap: var(--space-3); }
+#today { color: var(--text-secondary); font-size: var(--font-size-sm); font-weight: 600; text-align: right; }
+.theme-toggle { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid var(--border-subtle); border-radius: 50%; background: var(--surface-raised); color: var(--text-primary); font-size: var(--font-size-lg); }

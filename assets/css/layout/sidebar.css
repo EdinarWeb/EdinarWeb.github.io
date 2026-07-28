@@ -1,0 +1,9 @@
+#app { display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); min-height: 100vh; }
+#sidebar { position: sticky; top: 0; display: flex; flex-direction: column; height: 100vh; gap: var(--space-10); padding: var(--space-8); overflow-y: auto; background: var(--surface-base); border-inline-end: 1px solid var(--border-subtle); }
+.logo { display: grid; gap: var(--space-1); padding: var(--space-3); }
+.logo h1 { color: var(--brand-primary); font-size: clamp(1.55rem, 2vw, 2rem); font-weight: 800; }
+.logo p { color: var(--text-secondary); font-size: var(--font-size-sm); }
+.menu { display: grid; gap: var(--space-1); padding: 0; margin: 0; list-style: none; }
+.menu a, .menu-button { display: flex; align-items: center; gap: var(--space-3); width: 100%; padding: .8rem var(--space-4); border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text-secondary); cursor: pointer; font: inherit; font-weight: 600; text-align: left; text-decoration: none; transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast); }
+.menu a:hover, .menu-button:hover { background: var(--surface-hover); color: var(--brand-primary); transform: translateX(.1875rem); }
+.menu .active a { background: var(--brand-primary-soft); color: var(--brand-primary); }

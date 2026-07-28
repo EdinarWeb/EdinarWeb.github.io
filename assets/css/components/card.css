@@ -1,0 +1,8 @@
+.stat-card { position: relative; display: grid; gap: var(--space-3); min-width: 0; padding: clamp(var(--space-5), 2vw, var(--space-6)); overflow: hidden; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); background: var(--surface-base); color: var(--text-primary); box-shadow: var(--shadow-card); font: inherit; text-align: left; animation: rise-in var(--transition-base) both; }
+.stat-card::after { position: absolute; inset: auto -1.25rem -1.75rem auto; width: 5rem; height: 5rem; border-radius: 50%; background: var(--brand-primary-soft); content: ""; }
+.stat-card:hover { border-color: var(--brand-primary); box-shadow: var(--shadow-soft); transform: translateY(-.3rem); }
+.stat-card span { position: relative; z-index: 1; color: var(--text-secondary); font-size: var(--font-size-sm); font-weight: 600; }
+.stat-card strong { position: relative; z-index: 1; color: var(--brand-primary); font-size: var(--font-size-stat); font-weight: 800; line-height: 1; }
+.day-task-card { padding: var(--space-4); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--surface-raised); box-shadow: 0 .125rem .5rem var(--shadow-color); transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast); }
+.day-task-card:hover { border-color: var(--brand-primary); box-shadow: var(--shadow-card); transform: translateY(-.125rem); }
+.day-task-card.selected { border-color: var(--brand-primary); background: var(--brand-primary-soft); animation: pulse 1.4s ease-in-out infinite; }
