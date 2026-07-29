@@ -1,0 +1,5 @@
+/* Mantiene el aspecto de la fecha del calendario como control nativo accesible. */
+.day > .day-open { padding: 0; border: 0; background: transparent; color: var(--text-secondary); font: inherit; font-size: var(--font-size-sm); font-weight: 800; text-align: left; }
+.day > .day-open:hover { transform: none; }
+.day.today > .day-open { color: var(--brand-primary); }
+.calendar-day-view .day > .day-open { display: block; margin-bottom: var(--space-4); font-size: var(--font-size-lg); text-transform: capitalize; }

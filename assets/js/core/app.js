@@ -46,9 +46,13 @@ function registerServiceWorker() {
             const offerUpdate = () => {
                 if (registration.waiting && confirm("Hay una nueva versión disponible. ¿Actualizar ahora?")) pwa.activateUpdate();
             };
-            registration.addEventListener("updatefound", () => registration.installing?.addEventListener("statechange", () => {
-                if (registration.installing?.state === "installed" && navigator.serviceWorker.controller) offerUpdate();
-            }));
+            registration.addEventListener("updatefound", () => {
+                const installing = registration.installing;
+                if (!installing) return;
+                installing.addEventListener("statechange", () => {
+                    if (installing.state === "installed" && navigator.serviceWorker.controller) offerUpdate();
+                });
+            });
             offerUpdate();
         } catch (error) { console.error("No se pudo registrar el Service Worker.", error); }
     });

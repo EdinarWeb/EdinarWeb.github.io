@@ -64,7 +64,8 @@ function createAgenda(calendar, tasks, employees) {
 
 /** Crea una celda accesible, receptora de drag & drop. */
 function createDayCell(calendar, date, label, tasks, employees) {
-    const cell = createElement("article", { className: `day${date === toLocalDate() ? " today" : ""}`, attributes: { "data-date": date, tabindex: "0", role: "button", "aria-label": `Ver tareas del ${label}` } }); cell.appendChild(createElement("span", { text: label }));
+    const cell = createElement("article", { className: `day${date === toLocalDate() ? " today" : ""}`, attributes: { "data-date": date } });
+    cell.appendChild(createElement("button", { className: "day-open", text: label, attributes: { type: "button", "data-day-open": date, "aria-label": `Ver tareas del ${label}` } }));
     tasks.getByDate(date).filter(task => calendar.matches(task)).forEach(task => cell.appendChild(createTaskItem(task, employees))); return cell;
 }
 

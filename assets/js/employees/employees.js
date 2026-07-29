@@ -14,7 +14,13 @@ export class EmployeeManager {
 
     /** Carga empleados o crea la plantilla inicial. */
     async load() {
-        this.employees = await storage.getAll("employees");
+        this.employees = (await storage.getAll("employees")).map(employee => ({
+            ...employee,
+            name: normalizeText(employee.name),
+            role: employee.role || "Empleado",
+            color: /^#[0-9a-f]{6}$/i.test(employee.color || "") ? employee.color : "#2E7D32",
+            active: employee.active !== false
+        }));
         if (!this.employees.length) await this.createDefaults();
     }
 
@@ -74,7 +80,7 @@ export class EmployeeManager {
         select.replaceChildren(new Option("Seleccionar empleado", ""));
         select.options[0].disabled = true;
         this.getAll().forEach(employee => select.add(new Option(employee.name, employee.id)));
-        select.value = this.getById(currentValue) ? currentValue : "";
+        select.value = this.getAll().some(employee => String(employee.id) === String(currentValue)) ? currentValue : "";
     }
 
     /** Crea el panel de empleados una sola vez. */

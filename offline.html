@@ -4,20 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#5B2DCB">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; img-src 'self'; object-src 'none'; script-src 'self'; style-src 'self'">
     <title>Dia & Nit - Sin conexion</title>
-    <style>
-        :root { color-scheme: light dark; --brand:#5B2DCB; --canvas:#F5F6FA; --surface:#FFFFFF; --text:#2D2D2D; }
-        @media (prefers-color-scheme: dark) { :root { --canvas:#171522; --surface:#201D2D; --text:#F6F4FB; } }
-        body { display:grid; min-height:100vh; place-items:center; margin:0; background:var(--canvas); color:var(--text); font-family:"Segoe UI",Arial,sans-serif; }
-        main { width:min(90%,31rem); padding:2.5rem; border-radius:1.25rem; background:var(--surface); box-shadow:0 .75rem 2.5rem rgb(0 0 0 / 12%); text-align:center; }
-        h1 { color:var(--brand); } p { line-height:1.6; } button { padding:.75rem 1rem; border:0; border-radius:.75rem; background:var(--brand); color:#fff; cursor:pointer; font:inherit; font-weight:700; }
-    </style>
+    <link rel="stylesheet" href="assets/css/offline.css">
 </head>
 <body>
     <main>
         <h1>Sin conexion</h1>
         <p>Dia & Nit necesita una conexion para cargar esta pagina por primera vez. Las tareas ya guardadas volveran a estar disponibles al recuperar la red.</p>
-        <button type="button" onclick="location.reload()">Reintentar</button>
+        <button id="retryButton" type="button">Reintentar</button>
     </main>
+    <script src="assets/js/core/offline.js" defer></script>
 </body>
 </html>

@@ -11,8 +11,7 @@ class StorageManager {
     open() {
         if (this.connection) return this.connection;
         if (!globalThis.indexedDB) {
-            this.fallback = true;
-            this.connection = Promise.resolve(null);
+            this.enableFallback();
             return this.connection;
         }
         this.connection = new Promise((resolve, reject) => {
@@ -23,11 +22,14 @@ class StorageManager {
                 if (!database.objectStoreNames.contains("employees")) database.createObjectStore("employees", { keyPath: "id" });
             };
             request.onsuccess = () => {
-                request.result.onversionchange = () => request.result.close();
+                request.result.onversionchange = () => {
+                    request.result.close();
+                    this.connection = null;
+                };
                 resolve(request.result);
             };
-            request.onerror = () => { this.connection = null; reject(request.error); };
-            request.onblocked = () => reject(new Error("La base de datos está bloqueada por otra pestaña."));
+            request.onerror = () => { this.enableFallback(); resolve(null); };
+            request.onblocked = () => { this.enableFallback(); resolve(null); };
         });
         return this.connection;
     }
@@ -36,6 +38,7 @@ class StorageManager {
     async transaction(storeName, mode, operation) {
         if (this.fallback) return this.localTransaction(storeName, mode, operation);
         const database = await this.open();
+        if (!database) return this.localTransaction(storeName, mode, operation);
         return new Promise((resolve, reject) => {
             const transaction = database.transaction(storeName, mode);
             const request = operation(transaction.objectStore(storeName));
@@ -63,7 +66,7 @@ class StorageManager {
     /** Ofrece persistencia compatible con localStorage cuando IndexedDB no está disponible. */
     localTransaction(storeName, mode, operation) {
         const key = `dia-nit-${storeName}`;
-        const records = JSON.parse(localStorage.getItem(key) || localStorage.getItem(storeName) || "[]");
+        const records = this.readLocalCollection(key, storeName);
         const store = {
             put: entity => { const index = records.findIndex(item => String(item.id) === String(entity.id)); if (index >= 0) records[index] = entity; else records.push(entity); return { result: entity.id }; },
             getAll: () => ({ result: records }),
@@ -72,6 +75,22 @@ class StorageManager {
         const request = operation(store);
         if (mode === "readwrite") localStorage.setItem(key, JSON.stringify(records));
         return Promise.resolve(request?.result);
+    }
+
+    /** Activa la persistencia de respaldo sin dejar una conexión fallida en memoria. */
+    enableFallback() {
+        this.fallback = true;
+        this.connection = Promise.resolve(null);
+    }
+
+    /** Lee datos heredados corruptos de forma segura para no bloquear el arranque. */
+    readLocalCollection(primaryKey, legacyKey) {
+        try {
+            const records = JSON.parse(localStorage.getItem(primaryKey) || localStorage.getItem(legacyKey) || "[]");
+            return Array.isArray(records) ? records : [];
+        } catch {
+            return [];
+        }
     }
 }
 

@@ -1,0 +1,7 @@
+:root { color-scheme: light dark; --brand: #5B2DCB; --canvas: #F5F6FA; --surface: #FFFFFF; --text: #2D2D2D; }
+@media (prefers-color-scheme: dark) { :root { --canvas: #171522; --surface: #201D2D; --text: #F6F4FB; } }
+body { display: grid; min-height: 100vh; place-items: center; margin: 0; background: var(--canvas); color: var(--text); font-family: "Segoe UI", Arial, sans-serif; }
+main { width: min(90%, 31rem); padding: 2.5rem; border-radius: 1.25rem; background: var(--surface); box-shadow: 0 .75rem 2.5rem rgb(0 0 0 / 12%); text-align: center; }
+h1 { color: var(--brand); }
+p { line-height: 1.6; }
+button { padding: .75rem 1rem; border: 0; border-radius: .75rem; background: var(--brand); color: #fff; cursor: pointer; font: inherit; font-weight: 700; }

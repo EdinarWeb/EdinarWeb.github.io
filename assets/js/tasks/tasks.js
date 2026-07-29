@@ -68,11 +68,14 @@ export class TaskPanel {
     /** Refresca las opciones de filtro de empleado. */
     refreshEmployees() { this.employees.fillSelect(getElement("#filterEmployee")); getElement("#filterEmployee").options[0].textContent = "Todos los empleados"; }
     /** Abre el panel para una fecha concreta. */
-    open(date) { this.date = date; this.resultsMode = false; this.resultTasks = []; this.render(); getElement("#dayPanel").classList.add("show"); }
+    open(date) { this.date = date; this.resultsMode = false; this.resultTasks = []; this.render(); this.showPanel(); }
     /** Cierra el panel. */
     close() { getElement("#dayPanel").classList.remove("show"); }
     /** Muestra tareas de búsqueda o de una métrica del dashboard. */
-    showResults(tasks, title) { this.resultsMode = true; this.resultTasks = tasks; this.resultTitle = title; this.render(); getElement("#dayPanel").classList.add("show"); }
+    showResults(tasks, title) { this.resultsMode = true; this.resultTasks = tasks; this.resultTitle = title; this.render(); this.showPanel(); }
+
+    /** Muestra el panel tras renderizarlo para que sus controles sean accesibles. */
+    showPanel() { getElement("#dayPanel").classList.add("show"); }
     /** Renderiza el día activo aplicando filtros. */
     render() {
         if (this.resultsMode) {

@@ -1,15 +1,15 @@
-const VERSION = "v9";
+const VERSION = "v13";
 const SHELL_CACHE = `dia-nit-shell-${VERSION}`;
 const RUNTIME_CACHE = `dia-nit-runtime-${VERSION}`;
 const OFFLINE_URL = "./offline.html";
 const APP_SHELL = [
     "./", "./index.html", OFFLINE_URL, "./manifest.json",
-    "./assets/css/style.css", "./assets/css/base/variables.css", "./assets/css/base/reset.css", "./assets/css/base/typography.css", "./assets/css/base/animations.css", "./assets/css/base/utilities.css",
+    "./assets/css/style.css", "./assets/css/offline.css", "./assets/css/base/variables.css", "./assets/css/base/reset.css", "./assets/css/base/typography.css", "./assets/css/base/animations.css", "./assets/css/base/utilities.css",
     "./assets/css/layout/sidebar.css", "./assets/css/layout/header.css", "./assets/css/layout/dashboard.css",
     "./assets/css/components/button.css", "./assets/css/components/card.css", "./assets/css/components/modal.css", "./assets/css/components/install-button.css", "./assets/css/components/badge.css", "./assets/css/components/form.css",
-    "./assets/css/pages/calendar.css", "./assets/css/pages/employees.css", "./assets/css/pages/tasks.css",
+    "./assets/css/pages/calendar.css", "./assets/css/pages/calendar-accessibility.css", "./assets/css/pages/employees.css", "./assets/css/pages/tasks.css",
     "./assets/css/responsive/mobile.css", "./assets/css/responsive/tablet.css", "./assets/css/responsive/desktop.css",
-    "./assets/js/core/app.js", "./assets/js/storage/storage.js", "./assets/js/calendar/calendar.js", "./assets/js/calendar/calendar-render.js", "./assets/js/calendar/calendar-events.js",
+    "./assets/js/core/app.js", "./assets/js/core/offline.js", "./assets/js/storage/storage.js", "./assets/js/calendar/calendar.js", "./assets/js/calendar/calendar-render.js", "./assets/js/calendar/calendar-events.js",
     "./assets/js/employees/employees.js", "./assets/js/tasks/tasks.js", "./assets/js/dashboard/dashboard.js", "./assets/js/ui/modal.js", "./assets/js/ui/theme.js", "./assets/js/ui/reminders.js", "./assets/js/ui/search.js", "./assets/js/ui/pwa.js", "./assets/js/ui/installPWA.js",
     "./assets/js/utils/helpers.js", "./assets/js/utils/constants.js", "./assets/js/utils/date.js", "./assets/js/utils/validator.js",
     "./assets/icons/icon-72.png", "./assets/icons/icon-96.png", "./assets/icons/icon-128.png", "./assets/icons/icon-144.png", "./assets/icons/icon-152.png", "./assets/icons/icon-192.png", "./assets/icons/icon-384.png", "./assets/icons/icon-512.png"
@@ -34,7 +34,7 @@ self.addEventListener("fetch", event => {
     const { request } = event;
     if (request.method !== "GET") return;
     if (request.mode === "navigate") return event.respondWith(networkFirstNavigation(event));
-    if (new URL(request.url).origin === self.location.origin) event.respondWith(staleWhileRevalidate(request));
+    if (new URL(request.url).origin === self.location.origin) event.respondWith(staleWhileRevalidate(event));
 });
 
 /** Prioriza contenido actualizado para documentos y entrega offline cuando no hay red. */
@@ -43,7 +43,7 @@ async function networkFirstNavigation(event) {
     try {
         // Chrome Android puede iniciar la petición en paralelo con el arranque del SW.
         const response = await event.preloadResponse || await fetch(request);
-        cacheResponse(SHELL_CACHE, request, response.clone());
+        event.waitUntil(cacheResponse(SHELL_CACHE, request, response.clone()).catch(() => undefined));
         return response;
     } catch {
         return (await caches.match(request, { ignoreSearch: true })) || (await caches.match("./index.html")) || (await caches.match(OFFLINE_URL));
@@ -56,18 +56,20 @@ async function enableNavigationPreload() {
 }
 
 /** Sirve recursos cacheados de inmediato mientras refresca la cache en segundo plano. */
-async function staleWhileRevalidate(request) {
-    const cached = await caches.match(request);
-    const network = fetch(request).then(response => {
-        cacheResponse(RUNTIME_CACHE, request, response.clone());
-        return response;
-    }).catch(() => cached || new Response("Sin conexión", { status: 503, statusText: "Offline" }));
-    return cached || network;
+async function staleWhileRevalidate(event) {
+    const { request } = event;
+    const cached = caches.match(request);
+    const network = fetch(request).then(response => cacheResponse(RUNTIME_CACHE, request, response.clone()).catch(() => undefined).then(() => response));
+    // Mantiene viva la actualización en segundo plano incluso si ya existe caché.
+    event.waitUntil(network.catch(() => undefined));
+    const cachedResponse = await cached;
+    return cachedResponse || network.catch(() => new Response("Sin conexión", { status: 503, statusText: "Offline" }));
 }
 
 /** Guarda únicamente respuestas válidas del mismo origen. */
 function cacheResponse(cacheName, request, response) {
-    if (response?.ok && response.type === "basic") caches.open(cacheName).then(cache => cache.put(request, response));
+    if (!response?.ok || response.type !== "basic") return Promise.resolve();
+    return caches.open(cacheName).then(cache => cache.put(request, response));
 }
 
 /** Recibe notificaciones push cuando un servidor se conecte a la suscripción VAPID. */

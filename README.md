@@ -35,7 +35,7 @@ assets/
     employees/         Gestión de empleados y su panel
     tasks/             Dominio de tareas, índice por fecha y panel diario
     dashboard/         Métricas y accesos rápidos
-    ui/                Modal, búsqueda, tema, PWA y recordatorios
+    ui/                Modal, búsqueda, tema, instalación PWA y recordatorios
     utils/             Fechas, validación, constantes y DOM seguro
   icons/               Iconos declarados en el manifest
 ```
@@ -53,8 +53,8 @@ No se envían datos a ningún servidor.
 
 `service-worker.js` usa dos caches versionadas:
 
-- `dia-nit-shell-v8`: aplicación esencial, estilos, módulos, manifest e iconos.
-- `dia-nit-runtime-v8`: recursos del mismo origen actualizados en segundo plano.
+- `dia-nit-shell-v13`: aplicación esencial, estilos, módulos, manifest e iconos.
+- `dia-nit-runtime-v13`: recursos del mismo origen actualizados en segundo plano.
 
 Las navegaciones usan **network-first** con fallback a la aplicación cacheada y a `offline.html`. Los recursos estáticos usan **stale-while-revalidate** para responder rápido y actualizar el cache sin bloquear la interfaz.
 
@@ -89,4 +89,4 @@ Se validaron la sintaxis de todos los módulos ES, el service worker, el JSON de
 - Se eliminaron utilidades JavaScript sin uso y una variable CSS obsoleta.
 - Se corrigieron atributos ARIA en paneles y controles de vista del calendario.
 - Se ajustó el contraste del tema oscuro para cumplir el umbral AA en días destacados.
-- Se actualizó la caché PWA a `v8` después de limpiar recursos muertos.
+- Se actualizó la caché PWA a `v13` tras incorporar los recursos de instalación, la página offline segura y las mejoras de accesibilidad.

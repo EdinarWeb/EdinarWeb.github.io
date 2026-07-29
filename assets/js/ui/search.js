@@ -10,7 +10,11 @@ export class SearchManager {
     /** Filtra tareas por sus campos consultables. */
     search(value) { const query = value.trim().toLocaleLowerCase(); if (!query) return this.panel.close(); this.results = this.tasks.tasks.filter(task => [task.title, task.notes, task.date, task.hour, task.priority, this.employees.getById(task.employee)?.name].some(field => String(field ?? "").toLocaleLowerCase().includes(query))); this.selected = 0; this.panel.showResults(this.results, "Resultados"); this.highlight(); }
     /** Mueve la selección entre resultados. */
-    move(offset) { this.selected = Math.min(Math.max(this.selected + offset, 0), this.results.length - 1); this.highlight(); }
+    move(offset) {
+        if (!this.results.length) return;
+        this.selected = Math.min(Math.max(this.selected + offset, 0), this.results.length - 1);
+        this.highlight();
+    }
     /** Destaca la tarjeta correspondiente al resultado actual. */
     highlight() { document.querySelectorAll(".day-task-card.selected").forEach(card => card.classList.remove("selected")); const task = this.results[this.selected]; const card = task && [...document.querySelectorAll(".day-task-card[data-task-id]")].find(element => element.dataset.taskId === String(task.id)); card?.classList.add("selected"); }
     /** Abre el resultado seleccionado en el modal. */
