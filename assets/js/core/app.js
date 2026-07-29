@@ -8,6 +8,7 @@ import { SearchManager } from "../ui/search.js";
 import { initializeTheme } from "../ui/theme.js";
 import { ReminderManager } from "../ui/reminders.js";
 import { preparePwaArchitecture } from "../ui/pwa.js";
+import { initializeInstallPWA } from "../ui/installPWA.js";
 import { formatToday } from "../utils/date.js";
 import { getElement } from "../utils/helpers.js";
 
@@ -53,5 +54,8 @@ function registerServiceWorker() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", startApplication);
+document.addEventListener("DOMContentLoaded", () => {
+    initializeInstallPWA();
+    startApplication();
+});
 registerServiceWorker();

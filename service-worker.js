@@ -1,4 +1,4 @@
-const VERSION = "v8";
+const VERSION = "v9";
 const SHELL_CACHE = `dia-nit-shell-${VERSION}`;
 const RUNTIME_CACHE = `dia-nit-runtime-${VERSION}`;
 const OFFLINE_URL = "./offline.html";
@@ -6,11 +6,11 @@ const APP_SHELL = [
     "./", "./index.html", OFFLINE_URL, "./manifest.json",
     "./assets/css/style.css", "./assets/css/base/variables.css", "./assets/css/base/reset.css", "./assets/css/base/typography.css", "./assets/css/base/animations.css", "./assets/css/base/utilities.css",
     "./assets/css/layout/sidebar.css", "./assets/css/layout/header.css", "./assets/css/layout/dashboard.css",
-    "./assets/css/components/button.css", "./assets/css/components/card.css", "./assets/css/components/modal.css", "./assets/css/components/badge.css", "./assets/css/components/form.css",
+    "./assets/css/components/button.css", "./assets/css/components/card.css", "./assets/css/components/modal.css", "./assets/css/components/install-button.css", "./assets/css/components/badge.css", "./assets/css/components/form.css",
     "./assets/css/pages/calendar.css", "./assets/css/pages/employees.css", "./assets/css/pages/tasks.css",
     "./assets/css/responsive/mobile.css", "./assets/css/responsive/tablet.css", "./assets/css/responsive/desktop.css",
     "./assets/js/core/app.js", "./assets/js/storage/storage.js", "./assets/js/calendar/calendar.js", "./assets/js/calendar/calendar-render.js", "./assets/js/calendar/calendar-events.js",
-    "./assets/js/employees/employees.js", "./assets/js/tasks/tasks.js", "./assets/js/dashboard/dashboard.js", "./assets/js/ui/modal.js", "./assets/js/ui/theme.js", "./assets/js/ui/reminders.js", "./assets/js/ui/search.js", "./assets/js/ui/pwa.js",
+    "./assets/js/employees/employees.js", "./assets/js/tasks/tasks.js", "./assets/js/dashboard/dashboard.js", "./assets/js/ui/modal.js", "./assets/js/ui/theme.js", "./assets/js/ui/reminders.js", "./assets/js/ui/search.js", "./assets/js/ui/pwa.js", "./assets/js/ui/installPWA.js",
     "./assets/js/utils/helpers.js", "./assets/js/utils/constants.js", "./assets/js/utils/date.js", "./assets/js/utils/validator.js",
     "./assets/icons/icon-72.png", "./assets/icons/icon-96.png", "./assets/icons/icon-128.png", "./assets/icons/icon-144.png", "./assets/icons/icon-152.png", "./assets/icons/icon-192.png", "./assets/icons/icon-384.png", "./assets/icons/icon-512.png"
 ];
@@ -24,6 +24,7 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
     event.waitUntil(Promise.all([
         caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith("dia-nit-") && ![SHELL_CACHE, RUNTIME_CACHE].includes(key)).map(key => caches.delete(key)))),
+        enableNavigationPreload(),
         self.clients.claim()
     ]));
 });
@@ -32,19 +33,26 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
     const { request } = event;
     if (request.method !== "GET") return;
-    if (request.mode === "navigate") return event.respondWith(networkFirstNavigation(request));
+    if (request.mode === "navigate") return event.respondWith(networkFirstNavigation(event));
     if (new URL(request.url).origin === self.location.origin) event.respondWith(staleWhileRevalidate(request));
 });
 
 /** Prioriza contenido actualizado para documentos y entrega offline cuando no hay red. */
-async function networkFirstNavigation(request) {
+async function networkFirstNavigation(event) {
+    const { request } = event;
     try {
-        const response = await fetch(request);
+        // Chrome Android puede iniciar la petición en paralelo con el arranque del SW.
+        const response = await event.preloadResponse || await fetch(request);
         cacheResponse(SHELL_CACHE, request, response.clone());
         return response;
     } catch {
         return (await caches.match(request, { ignoreSearch: true })) || (await caches.match("./index.html")) || (await caches.match(OFFLINE_URL));
     }
+}
+
+/** Activa Navigation Preload cuando Chrome lo ofrece para acelerar navegaciones. */
+async function enableNavigationPreload() {
+    if (self.registration.navigationPreload) await self.registration.navigationPreload.enable();
 }
 
 /** Sirve recursos cacheados de inmediato mientras refresca la cache en segundo plano. */

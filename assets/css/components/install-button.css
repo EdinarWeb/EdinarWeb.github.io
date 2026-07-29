@@ -1,0 +1,61 @@
+/* Instalación PWA: botón flotante, guía iOS y confirmación de éxito. */
+.install-pwa-button {
+    position: fixed;
+    right: max(var(--space-5), env(safe-area-inset-right));
+    bottom: max(var(--space-5), env(safe-area-inset-bottom));
+    z-index: 1000;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 3.25rem;
+    padding: .75rem 1.15rem;
+    border: 0;
+    border-radius: 999px;
+    background: #5B2DCB;
+    box-shadow: 0 .75rem 1.75rem rgb(58 27 136 / 35%);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 800;
+    line-height: 1.2;
+    opacity: 0;
+    transform: translateY(1rem) scale(.96);
+    transition: transform var(--transition-base), opacity var(--transition-base), background var(--transition-fast), box-shadow var(--transition-fast);
+}
+.install-pwa-button[hidden] { display: none; }
+.install-pwa-button--visible { opacity: 1; transform: translateY(0) scale(1); }
+.install-pwa-button:hover:not(:disabled) { background: #4520A4; box-shadow: 0 1rem 2rem rgb(58 27 136 / 42%); transform: translateY(-.2rem); }
+.install-pwa-button:active:not(:disabled) { transform: translateY(.05rem) scale(.97); }
+.install-pwa-button:disabled { cursor: wait; opacity: .75; }
+.install-pwa-button__icon { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+
+.install-pwa-modal { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; padding: var(--space-4); }
+.install-pwa-modal[hidden] { display: none; }
+.install-pwa-modal__backdrop { position: absolute; inset: 0; background: var(--overlay); backdrop-filter: blur(.25rem); }
+.install-pwa-modal__dialog { position: relative; width: min(100%, 32rem); max-height: min(90vh, 43rem); overflow: auto; border: 1px solid var(--border-subtle); border-radius: var(--radius-xl); background: var(--surface-base); box-shadow: var(--shadow-float); animation: rise-in var(--transition-base); }
+.install-pwa-modal__header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--border-subtle); }
+.install-pwa-modal__header h2 { font-size: var(--font-size-xl); font-weight: 800; }
+.install-pwa-modal__close { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border: 0; border-radius: 50%; background: var(--surface-hover); color: var(--text-primary); cursor: pointer; font-size: 1.75rem; line-height: 1; }
+.install-pwa-modal__dialog > p { padding: var(--space-5) var(--space-6) 0; color: var(--text-secondary); }
+.install-pwa-steps { display: grid; gap: var(--space-4); margin: 0; padding: var(--space-6); list-style: none; counter-reset: install-step; }
+.install-pwa-steps li { display: grid; grid-template-columns: 2.75rem 1fr; align-items: start; gap: var(--space-3); counter-increment: install-step; }
+.install-pwa-step-icon { display: grid; width: 2.75rem; height: 2.75rem; place-items: center; border-radius: var(--radius-sm); background: var(--brand-primary-soft); color: var(--brand-primary); font-size: 1.45rem; font-weight: 800; }
+.install-pwa-step-icon svg { width: 1.45rem; height: 1.45rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+.install-pwa-step-icon--check { background: var(--semantic-success-soft); color: var(--semantic-success); }
+.install-pwa-steps strong, .install-pwa-steps small { display: block; }
+.install-pwa-steps strong { margin: .1rem 0; }
+.install-pwa-steps small { color: var(--text-secondary); line-height: 1.45; }
+.install-pwa-modal-open { overflow: hidden; }
+
+.install-pwa-toast { position: fixed; z-index: 10001; left: 50%; bottom: max(var(--space-5), env(safe-area-inset-bottom)); max-width: calc(100% - 2rem); padding: .9rem 1.15rem; border-radius: var(--radius-sm); background: var(--semantic-success); box-shadow: var(--shadow-float); color: #fff; font-weight: 700; opacity: 0; pointer-events: none; transform: translate(-50%, 1rem); transition: transform var(--transition-base), opacity var(--transition-base); }
+.install-pwa-toast--visible { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 30rem) {
+    .install-pwa-button { right: var(--space-4); bottom: max(var(--space-4), env(safe-area-inset-bottom)); min-height: 3rem; padding: .7rem 1rem; font-size: var(--font-size-sm); }
+    .install-pwa-modal { padding: var(--space-3); }
+    .install-pwa-modal__header, .install-pwa-modal__dialog > p, .install-pwa-steps { padding-left: var(--space-4); padding-right: var(--space-4); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .install-pwa-button, .install-pwa-toast { transition: none; }
+    .install-pwa-modal__dialog { animation: none; }
+}
