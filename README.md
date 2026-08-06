@@ -2,7 +2,9 @@
 
 Progressive Web App para gestionar tareas, empleados, turnos, vacaciones y recordatorios. Está construida con HTML5, CSS puro y módulos JavaScript ES2023; no utiliza frameworks ni dependencias de producción.
 
-## Características
+PUEDES PROBARLA !AQUÍ¡
+
+## Características  
 
 - Dashboard con métricas de tareas y empleados.
 - Calendario profesional con vistas mensual, semanal, diaria y agenda.
